@@ -24,7 +24,6 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         }
 
         [HttpGet("{id}")]
-
         public async Task<ActionResult> GetById(int id)
         {
             var model = await _context.Veiculos.FirstOrDefaultAsync(c => c.Id == id);
@@ -35,7 +34,6 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         }
 
         [HttpPost]
-
         public async Task<ActionResult> Create(Veiculo model)
         {
             if(model.AnoFabricacao <= 0 || model.AnoModelo <= 0)
@@ -47,6 +45,37 @@ namespace mf_apis_web_services_fuel_manager.Controllers
 
             return CreatedAtAction("GetById", new {id = model.Id}, model);
             
+        }
+
+        [HttpPut("{id}")]
+
+        public async Task<ActionResult> Update (int id, Veiculo model)
+        {
+            if (id != model.Id) return BadRequest();
+            
+            var modeloDb = await _context.Veiculos.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+
+            if (modeloDb == null) return NotFound(new { message = "O Id informado não existe" });
+
+            _context.Veiculos.Update(model);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+
+        public async Task<ActionResult> Delete(int id)
+        {
+            
+            var model = await _context.Veiculos.FindAsync(id);
+
+            if (model == null) return NotFound(new { message = "O Id informado não existe" });
+
+            _context.Veiculos.Remove(model);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
