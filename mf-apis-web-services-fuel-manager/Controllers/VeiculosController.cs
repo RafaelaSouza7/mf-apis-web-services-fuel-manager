@@ -19,14 +19,18 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var model = await _context.Veiculos.ToListAsync();
+            var model = await _context.Veiculos
+                .Include(t => t.Consumos)
+                .ToListAsync();
             return Ok(model);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            var model = await _context.Veiculos.FirstOrDefaultAsync(c => c.Id == id);
+            var model = await _context.Veiculos
+                .Include(t => t.Consumos)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (model == null) return NotFound(new { message = "O Id informado não existe" });
 
